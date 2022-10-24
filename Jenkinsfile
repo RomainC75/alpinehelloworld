@@ -6,6 +6,8 @@
 //  SCM : git
 //  script path : Jenkinsfile :-)
 
+@Library('eazytraining-shared-library')_
+
 pipeline {
      environment {
        IMAGE_NAME = "alpinehelloworld"
@@ -97,11 +99,10 @@ pipeline {
      }
   }
   post {
-       success {
-         slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+       always {
+         script {
+           slackNotifier currentBuild.result
          }
-      failure {
-            slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
-          }   
-    }
+       }  
+  }
 }
