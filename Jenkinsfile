@@ -1,3 +1,11 @@
+// create new job "pipeline"
+// => github project
+// => github hook
+// =========================
+// pipeline definition : Pipeline script from SCM
+//  SCM : git
+//  script path : Jenkinsfile :-)
+
 pipeline {
      environment {
        IMAGE_NAME = "alpinehelloworld"
@@ -53,6 +61,8 @@ pipeline {
             }
       agent any
       environment {
+            // => from the global credentials !
+            // get the heroku secret from heroku/account settings / api key
           HEROKU_API_KEY = credentials('heroku_api_key')
       }  
       steps {
@@ -86,4 +96,12 @@ pipeline {
         }
      }
   }
+  post {
+       success {
+         slackSend (color: '#00FF00', message: "SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+         }
+      failure {
+            slackSend (color: '#FF0000', message: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]' (${env.BUILD_URL})")
+          }   
+    }
 }
